@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BI_Search_Tool</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3517786470194208" crossorigin="anonymous"></script>
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:728px;height:90px"
+         data-ad-client="ca-pub-3517786470194208"
+         data-ad-slot="9526789664"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script> 
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: lightblue;
+        }
+
+        .search-result {
+            float: left;
+            margin-right: 10px;
+            width: calc(25% - 10px);
+            margin-bottom: 10px;
+        }
+
+        .search-row {
+            width: 95%;
+            margin-bottom: 60px;
+            margin-right: 25px;
+            margin-left: 25px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input,
+        .search-bar button {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .search-bar input[type="text"] {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .search-bar button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .search-results {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .search-result {
+            flex: 0 0 25%;
+            margin: 10px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .search-result:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .keywords {
+            display: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .search-result:hover .keywords {
+            display: block;
+        }
+
+        .footer-sticker {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <h1>Initiatives Search</h1>
+        <div class="search-bar">
+            <input type="text" id="name" value="" placeholder="Company Name">
+            <input type="date" id="start-date">
+            <input type="date" id="end-date">
+            <button type="button" onclick="addNames()">Search</button>
+            <button type="button" onclick="clearInput()" class="clear-button">Clear</button>
+            <button type="button" onclick="openMultiplePages()">Open Pages</button>
+        </div>
+    </center>
+    <div class="search-results" id="result"></div>
+    <script>
+        var searchPages = [];
+
+        function formatDate(date) {
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+            var year = date.getFullYear();
+            return padNumber(month) + "-" + padNumber(day) + "-" + year;
+        }
+
+        function addNames() {
+            var name = document.getElementById("name").value;
+            var result = "";
+            var words = [
+                "logo",
+                "NewsRoom",
+                "Press Release",
+                "Virtual",
+                "Iot",
+                "AI",
+                "VR",
+                "AR",
+                "Artificial intelligence",
+                "Augmented Reality",
+                "Virtual Reality",
+                "Internet of Things",
+                "Machine learning",
+                "Automation",
+                "Autonomous",
+                "metaverse",
+                "Sensor",
+                "Digital",
+                "Robotics",
+                "Drone",
+                "App",
+                "Cloud",
+                "Blockchain",
+                "Cybersecurity",
+                "Chatbot",
+                "Contactless",
+                "5G",
+                "3D",
+                "Smart",
+                "Intelligent",
+                "Digital Transformation",
+                "Digital Banking",
+                "Online Banking",
+                // Add more words here
+            ];
+
+            var startDate = new Date(document.getElementById("start-date").value);
+            var endDate = new Date(document.getElementById("end-date").value);
+
+            var dateRange = "&tbs=cdr:1,cd_min:" + formatDate(startDate) + ",cd_max:" + formatDate(endDate);
+
+            for (var i = 0; i < words.length; i++) {
+                var combinedName = name + " + " + words[i];
+                var resultIndex = Math.floor(i / 4);
+                if (i % 4 === 0) {
+                    result += "<div class='search-row'>";
+                }
+                result += "<div class='search-result'><a href='https://www.google.com/search?q=" + encodeURIComponent(combinedName) + dateRange + "' target='_blank'>" + combinedName + "</a><div class='keywords'>" + words[i] + "</div></div>";
+                if (i % 4 === 3 || i === words.length - 1) {
+                    result += "</div>";
+                }
+            }
+
+            document.getElementById("result").innerHTML = result;
+            searchPages = createSearchPages(words, name, dateRange);
+        }
+
+        function createSearchPages(words, name, dateRange) {
+            var pages = [];
+            var itemsPerPage = 10;
+            var totalResults = words.length;
+
+            var numPages = Math.ceil(totalResults / itemsPerPage);
+
+            for (var i = 0; i < numPages; i++) {
+                var startIdx = i * itemsPerPage;
+                var endIdx = (i + 1) * itemsPerPage;
+                var pageWords = words.slice(startIdx, endIdx);
+                var searchQuery = pageWords.map(function(word) {
+                    return encodeURIComponent(name + " + " + word) + dateRange;
+                });
+                pages.push(searchQuery);
+            }
+
+            return pages;
+        }
+
+        function openMultiplePages() {
+            if (searchPages.length === 0) {
+                alert("Perform a search first to generate search pages.");
+                return;
+            }
+
+            for (var i = 0; i < searchPages.length; i++) {
+                var pageWords = searchPages[i];
+                var searchQuery = pageWords.join("|");
+                var searchURL = "https://www.google.com/search?q=" + searchQuery;
+                window.open(searchURL, "_blank");
+            }
+        }
+
+        function clearInput() {
+            document.getElementById("name").value = "";
+            document.getElementById("start-date").value = "";
+            document.getElementById("end-date").value = "";
+            document.getElementById("result").innerHTML = "";
+            searchPages = [];
+        }
+
+        function padNumber(num) {
+            if (num < 10) {
+                return "0" + num;
+            } else {
+                return num;
+            }
+        }
+    </script>
+    <div class="footer-sticker">
+        <p>Design By: n-balaji.m@draup.com</p>
+        <p>Version 1.2</p>
+    </div>
+</body>
+</html>
